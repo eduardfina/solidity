@@ -281,89 +281,90 @@ namespace solidity::langutil
 enum class Token : unsigned int {
 #define T(name, string, precedence) name,
 	TOKEN_LIST(T, T)
-	NUM_TOKENS
+		NUM_TOKENS
 #undef T
 };
 
 namespace TokenTraits
 {
-	constexpr size_t count() { return static_cast<size_t>(Token::NUM_TOKENS); }
+constexpr size_t count() { return static_cast<size_t>(Token::NUM_TOKENS); }
 
-	// Predicates
-	constexpr bool isElementaryTypeName(Token tok) { return Token::Int <= tok && tok < Token::TypesEnd; }
-	constexpr bool isAssignmentOp(Token tok) { return Token::Assign <= tok && tok <= Token::AssignMod; }
-	constexpr bool isBinaryOp(Token op) { return Token::Comma <= op && op <= Token::Exp; }
-	constexpr bool isCommutativeOp(Token op) { return op == Token::BitOr || op == Token::BitXor || op == Token::BitAnd ||
-		op == Token::Add || op == Token::Mul || op == Token::Equal || op == Token::NotEqual; }
-	constexpr bool isArithmeticOp(Token op) { return Token::Add <= op && op <= Token::Exp; }
-	constexpr bool isCompareOp(Token op) { return Token::Equal <= op && op <= Token::GreaterThanOrEqual; }
+// Predicates
+constexpr bool isElementaryTypeName(Token tok) { return Token::Int <= tok && tok < Token::TypesEnd; }
+constexpr bool isAssignmentOp(Token tok) { return Token::Assign <= tok && tok <= Token::AssignMod; }
+constexpr bool isBinaryOp(Token op) { return Token::Comma <= op && op <= Token::Exp; }
+constexpr bool isCommutativeOp(Token op) { return op == Token::BitOr || op == Token::BitXor || op == Token::BitAnd ||
+		   op == Token::Add || op == Token::Mul || op == Token::Equal || op == Token::NotEqual; }
+constexpr bool isArithmeticOp(Token op) { return Token::Add <= op && op <= Token::Exp; }
+constexpr bool isCompareOp(Token op) { return Token::Equal <= op && op <= Token::GreaterThanOrEqual; }
+constexpr bool isPragmaOp(Token op) { return (Token::LessThan <= op && op <= Token::GreaterThanOrEqual) || op == Token::BitXor; }
 
-	constexpr bool isBitOp(Token op) { return (Token::BitOr <= op && op <= Token::BitAnd) || op == Token::BitNot; }
-	constexpr bool isBooleanOp(Token op) { return (Token::Or <= op && op <= Token::And) || op == Token::Not; }
-	constexpr bool isUnaryOp(Token op) { return (Token::Not <= op && op <= Token::Delete) || op == Token::Add || op == Token::Sub; }
-	constexpr bool isCountOp(Token op) { return op == Token::Inc || op == Token::Dec; }
-	constexpr bool isShiftOp(Token op) { return (Token::SHL <= op) && (op <= Token::SHR); }
-	constexpr bool isVariableVisibilitySpecifier(Token op) { return op == Token::Public || op == Token::Private || op == Token::Internal; }
-	constexpr bool isVisibilitySpecifier(Token op) { return isVariableVisibilitySpecifier(op) || op == Token::External; }
-	constexpr bool isLocationSpecifier(Token op) { return op == Token::Memory || op == Token::Storage || op == Token::CallData; }
+constexpr bool isBitOp(Token op) { return (Token::BitOr <= op && op <= Token::BitAnd) || op == Token::BitNot; }
+constexpr bool isBooleanOp(Token op) { return (Token::Or <= op && op <= Token::And) || op == Token::Not; }
+constexpr bool isUnaryOp(Token op) { return (Token::Not <= op && op <= Token::Delete) || op == Token::Add || op == Token::Sub; }
+constexpr bool isCountOp(Token op) { return op == Token::Inc || op == Token::Dec; }
+constexpr bool isShiftOp(Token op) { return (Token::SHL <= op) && (op <= Token::SHR); }
+constexpr bool isVariableVisibilitySpecifier(Token op) { return op == Token::Public || op == Token::Private || op == Token::Internal; }
+constexpr bool isVisibilitySpecifier(Token op) { return isVariableVisibilitySpecifier(op) || op == Token::External; }
+constexpr bool isLocationSpecifier(Token op) { return op == Token::Memory || op == Token::Storage || op == Token::CallData; }
 
-	constexpr bool isStateMutabilitySpecifier(Token op)
-	{
-		return op == Token::Pure || op == Token::View || op == Token::Payable;
-	}
+constexpr bool isStateMutabilitySpecifier(Token op)
+{
+	return op == Token::Pure || op == Token::View || op == Token::Payable;
+}
 
-	constexpr bool isEtherSubdenomination(Token op) { return op >= Token::SubWei && op <= Token::SubEther; }
-	constexpr bool isTimeSubdenomination(Token op) { return op == Token::SubSecond || op == Token::SubMinute || op == Token::SubHour || op == Token::SubDay || op == Token::SubWeek || op == Token::SubYear; }
-	constexpr bool isReservedKeyword(Token op) { return (Token::After <= op && op <= Token::Var); }
+constexpr bool isEtherSubdenomination(Token op) { return op >= Token::SubWei && op <= Token::SubEther; }
+constexpr bool isTimeSubdenomination(Token op) { return op == Token::SubSecond || op == Token::SubMinute || op == Token::SubHour || op == Token::SubDay || op == Token::SubWeek || op == Token::SubYear; }
+constexpr bool isReservedKeyword(Token op) { return (Token::After <= op && op <= Token::Var); }
 
-	constexpr bool isYulKeyword(Token tok)
-	{
-		return tok == Token::Function || tok == Token::Let || tok == Token::If || tok == Token::Switch || tok == Token::Case ||
-			tok == Token::Default || tok == Token::For || tok == Token::Break || tok == Token::Continue || tok == Token::Leave ||
-			tok == Token::TrueLiteral || tok == Token::FalseLiteral || tok == Token::HexStringLiteral || tok == Token::Hex;
-	}
+constexpr bool isYulKeyword(Token tok)
+{
+	return tok == Token::Function || tok == Token::Let || tok == Token::If || tok == Token::Switch || tok == Token::Case ||
+		   tok == Token::Default || tok == Token::For || tok == Token::Break || tok == Token::Continue || tok == Token::Leave ||
+		   tok == Token::TrueLiteral || tok == Token::FalseLiteral || tok == Token::HexStringLiteral || tok == Token::Hex;
+}
 
-	bool isYulKeyword(std::string const& _literal);
+bool isYulKeyword(std::string const& _literal);
 
-	Token AssignmentToBinaryOp(Token op);
+Token AssignmentToBinaryOp(Token op);
 
-	// @returns the precedence > 0 for binary and compare
-	// operators; returns 0 otherwise.
-	constexpr int precedence(Token tok)
-	{
-		int8_t constexpr precs[TokenTraits::count()] =
+// @returns the precedence > 0 for binary and compare
+// operators; returns 0 otherwise.
+constexpr int precedence(Token tok)
+{
+	int8_t constexpr precs[TokenTraits::count()] =
 		{
-			#define T(name, string, precedence) precedence,
+#define T(name, string, precedence) precedence,
 			TOKEN_LIST(T, T)
-			#undef T
+#undef T
 		};
-		return precs[static_cast<size_t>(tok)];
-	}
+	return precs[static_cast<size_t>(tok)];
+}
 
-	constexpr bool hasExpHighestPrecedence()
-	{
-		constexpr int expPrecedence = TokenTraits::precedence(Token::Exp);
-		static_assert(expPrecedence == 14, "Exp precedence changed.");
+constexpr bool hasExpHighestPrecedence()
+{
+	constexpr int expPrecedence = TokenTraits::precedence(Token::Exp);
+	static_assert(expPrecedence == 14, "Exp precedence changed.");
 
-		#define T(name, string, precedence) ((Token::name == Token::Exp) || precedence < expPrecedence) &&
-		return
-			TOKEN_LIST(T, T)
+#define T(name, string, precedence) ((Token::name == Token::Exp) || precedence < expPrecedence) &&
+	return
+		TOKEN_LIST(T, T)
 			true;
-		#undef T
-	}
+#undef T
+}
 
-	std::tuple<Token, unsigned int, unsigned int> fromIdentifierOrKeyword(std::string const& _literal);
+std::tuple<Token, unsigned int, unsigned int> fromIdentifierOrKeyword(std::string const& _literal);
 
-	// @returns a string corresponding to the C++ token name
-	// (e.g. "LT" for the token LT).
-	char const* name(Token tok);
+// @returns a string corresponding to the C++ token name
+// (e.g. "LT" for the token LT).
+char const* name(Token tok);
 
-	// @returns a string corresponding to the JS token string
-	// (.e., "<" for the token LT) or nullptr if the token doesn't
-	// have a (unique) string (e.g. an IDENTIFIER).
-	char const* toString(Token tok);
+// @returns a string corresponding to the JS token string
+// (.e., "<" for the token LT) or nullptr if the token doesn't
+// have a (unique) string (e.g. an IDENTIFIER).
+char const* toString(Token tok);
 
-	std::string friendlyName(Token tok);
+std::string friendlyName(Token tok);
 }
 
 inline std::ostream& operator<<(std::ostream& os, Token token)
