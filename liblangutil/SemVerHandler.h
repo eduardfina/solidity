@@ -103,6 +103,7 @@ private:
 	Token currentToken() const;
 	void nextToken();
 	bool containPrefixingToken() const;
+	bool aaaa() const;
 
 	std::vector<Token> m_tokens;
 	std::vector<std::string> m_literals;
